@@ -1,8 +1,7 @@
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../../../lib/prisma";
 
-const prisma = new PrismaClient();
 
 function isAdmin(session) {
   const adminEmail = process.env.ADMIN_EMAIL || "";
@@ -51,7 +50,7 @@ export default async function handler(req, res) {
 
     // POST: pick 10 random unpicked users and mark them as picked
     // Use raw SQL for random order in Postgres
-    const candidates = await prisma.$queryRaw\`SELECT "id" FROM "User" WHERE "youtubeHandle" IS NOT NULL AND length("youtubeHandle") > 0 AND "picked" = false ORDER BY random() LIMIT 10;\`;
+    const candidates = await prisma.$queryRaw`SELECT "id" FROM "User" WHERE "youtubeHandle" IS NOT NULL AND length("youtubeHandle") > 0 AND "picked" = false ORDER BY random() LIMIT 10`;
     const ids = (candidates || []).map((c) => c.id);
 
     if (ids.length > 0) {
