@@ -33,7 +33,7 @@ export default function Home() {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch("/api/admin/pick-random", { method: "POST" });
+      const res = await fetch("/api/admin/pick-random", { method: "GET" });
       const data = await safeJson(res);
       if (!res.ok) throw new Error(data?.error || "Failed to fetch users");
       setHandles(Array.isArray(data.handles) ? data.handles : []);
@@ -126,7 +126,7 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
             <div>
               <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-gray-900">
-                GET Ral Subscribers
+                Get Real Subscribers
               </h1>
               <p className="mt-4 text-lg text-gray-700">
                 Discover and share YouTube handles. Copy links instantly and grow your community.
