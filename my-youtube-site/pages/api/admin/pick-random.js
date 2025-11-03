@@ -16,10 +16,12 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const session = await getServerSession(req, res, authOptions);
-  if (!session?.user?.email) return res.status(401).json({ error: "Unauthorized" });
-
   try {
+    const session = await getServerSession(req, res, authOptions);
+    if (!session?.user?.email) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
     // Fetch 10 random users with non-empty youtubeHandle
     const result = await prisma.$queryRaw`SELECT "youtubeHandle" FROM "User" WHERE "youtubeHandle" IS NOT NULL AND length("youtubeHandle") > 0 ORDER BY random() LIMIT 10;`;
     const handles = (result || []).map((r) => r.youtubeHandle);
