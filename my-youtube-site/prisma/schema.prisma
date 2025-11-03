@@ -13,5 +13,7 @@ model User {
   name          String?
   phone         String?
   youtubeHandle String?
+  picked        Boolean  @default(false)
+  pickedAt      DateTime?
   createdAt     DateTime @default(now())
 }
