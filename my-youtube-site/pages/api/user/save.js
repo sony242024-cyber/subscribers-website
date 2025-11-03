@@ -1,8 +1,7 @@
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../../../lib/prisma";
 
-const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
@@ -30,7 +29,9 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ success: true, user });
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: "Internal server error" });
+    console.error("/api/user/save error:", err);
+    return res
+      .status(500)
+      .json({ error: "Internal server error", details: err?.message || null });
   }
 }

@@ -16,12 +16,25 @@ export default function Home() {
     return `https://www.youtube.com/${handle}`;
   };
 
+  const safeJson = async (res) => {
+    const ct = res.headers.get("content-type") || "";
+    if (!ct.includes("application/json")) {
+      const text = await res.text();
+      throw new Error(text || `Unexpected response: ${res.status}`);
+    }
+    try {
+      return await res.json();
+    } catch (e) {
+      throw new Error("Failed to parse JSON response");
+    }
+  };
+
   const fetchRandom = async () => {
     setLoading(true);
     setError("");
     try {
       const res = await fetch("/api/admin/pick-random", { method: "POST" });
-      const data = await res.json();
+      const data = await safeJson(res);
       if (!res.ok) throw new Error(data?.error || "Failed to fetch users");
       setHandles(Array.isArray(data.handles) ? data.handles : []);
     } catch (err) {
