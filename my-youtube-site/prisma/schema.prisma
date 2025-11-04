@@ -17,3 +17,20 @@ model User {
   pickedAt      DateTime?
   createdAt     DateTime @default(now())
 }
+
+/// Singleton settings row for admin credentials and site-wide config
+model AdminSettings {
+  // Use a fixed primary key so exactly one row exists
+  id           String   @id @default("singleton")
+
+  // Admin panel credentials (username + bcrypt hash)
+  adminUser    String   @default("admin")
+  adminPassHash String  @default("")
+
+  // Example site settings
+  siteTitle    String   @default("YT Subscribers")
+  announcement String?  // optional banner/message
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

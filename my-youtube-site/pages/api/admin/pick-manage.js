@@ -16,6 +16,8 @@ function isAdmin(session, req) {
 }
 
 export default async function handler(req, res) {
+  res.setHeader("Cache-Control", "no-store");
+
   const session = await getServerSession(req, res, authOptions);
   if (!session?.user?.email) {
     return res.status(401).json({ error: "Unauthorized" });
@@ -87,7 +89,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ pickedIds: ids, notPicked, picked });
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: "Internal server error" });
+    console.error("/api/admin/pick-manage error:", err);
+    return res.status(500).json({ error: "Internal server error", details: err?.message || null });
   }
 }
