@@ -3,7 +3,13 @@ import { authOptions } from "../auth/[...nextauth]";
 import prisma from "../../../lib/prisma";
 
 
-function isAdmin(session) {
+function isAdmin(session, req) {
+  // 1) Cookie-based admin
+  const cookie = req.headers.cookie || "";
+  const hasAdminCookie = /(?:^|;\s*)admin_auth=1(?:;|$)/.test(cookie);
+  if (hasAdminCookie) return true;
+
+  // 2) NextAuth email-based admin
   const adminEmail = process.env.ADMIN_EMAIL || "";
   const current = session?.user?.email || "";
   return adminEmail && current && adminEmail.toLowerCase() === current.toLowerCase();
@@ -14,7 +20,7 @@ export default async function handler(req, res) {
   if (!session?.user?.email) {
     return res.status(401).json({ error: "Unauthorized" });
   }
-  if (!isAdmin(session)) {
+  if (!isAdmin(session, req)) {
     return res.status(403).json({ error: "Forbidden: Admin only" });
   }
 
